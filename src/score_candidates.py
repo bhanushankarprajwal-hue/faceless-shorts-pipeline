@@ -26,7 +26,7 @@ CRITERIA = [
     "competition_level", "shorts_format_fit", "overall_originality",
 ]
 
-MAX_CANDIDATES_TO_SCORE = 15  # keep batch size sane for one API call
+MAX_CANDIDATES_TO_SCORE = 10  # keep batch size sane for one API call
 
 
 def build_prompt(candidates, recent_used_summaries):
@@ -53,7 +53,7 @@ Score EACH candidate below on a 1-10 scale for each criterion:
 Also flag "is_likely_duplicate": true/false if it overlaps with the used stories above,
 and give a one-line "duplicate_reason" if true (else empty string).
 
-Give a one-line "justification" per candidate explaining the scores.
+Give a SHORT "justification" per candidate (maximum 12 words) explaining the scores.
 
 Candidates:
 {candidates_block}
@@ -107,11 +107,18 @@ def main():
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel(MODEL_NAME)
 
-    prompt = build_prompt(candidates, recent_summaries)
+        prompt = build_prompt(candidates, recent_summaries)
     response = model.generate_content(
         prompt,
-        generation_config={"max_output_tokens": 8192},
+        generation_config={"max_output_tokens": 16000},
     )
+
+    try:
+        finish_reason = response.candidates[0].finish_reason
+        print(f"Gemini finish_reason: {finish_reason}")
+    except Exception:
+        pass
+
     try:
         parsed = extract_json(response.text)
     except Exception as e:
@@ -119,7 +126,6 @@ def main():
         print(response.text)
         print("=== END RAW RESPONSE ===")
         raise e
-
     scored = []
     for result in parsed.get("results", []):
         idx = result.get("index")
