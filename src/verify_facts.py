@@ -107,4 +107,4 @@ def main():
             }
 
         verified.append({**candidate, "verification": result})
-        print(f"[{result.get('confidence',
+                print(f"[{result.get('confidence', '?').upper()}] {candidate.get('title')}")
