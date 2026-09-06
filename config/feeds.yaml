@@ -1,0 +1,30 @@
+# List of RSS feeds the pipeline checks each day for story candidates.
+# You can add or remove feeds here later without touching any other code.
+
+feeds:
+  - name: "Atlas Obscura"
+    url: "https://www.atlasobscura.com/feeds/latest"
+
+  - name: "IFLScience"
+    url: "https://www.iflscience.com/rss"
+
+  - name: "Smithsonian Magazine - Smart News"
+    url: "https://www.smithsonianmag.com/rss/smart-news/"
+
+  - name: "Mental Floss"
+    url: "https://www.mentalfloss.com/rss.xml"
+
+  - name: "BBC Future"
+    url: "https://www.bbc.com/future/feed.rss"
+
+  - name: "ScienceDaily - Archaeology"
+    url: "https://www.sciencedaily.com/rss/fossils_ruins/archaeology.xml"
+
+  - name: "ScienceDaily - Animals"
+    url: "https://www.sciencedaily.com/rss/plants_animals/animals.xml"
+
+  - name: "NASA News"
+    url: "https://www.nasa.gov/feed/"
+
+  - name: "Live Science"
+    url: "https://www.livescience.com/feeds/all"
