@@ -16,8 +16,6 @@ from sheets_helper import read_all_rows
 INPUT_PATH = "data/filtered_candidates.json"
 OUTPUT_PATH = "data/scored_candidates.json"
 
-# If this default model name ever errors out, check aistudio.google.com
-# for the current available free-tier model names and update this.
 MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
 CRITERIA = [
@@ -26,7 +24,7 @@ CRITERIA = [
     "competition_level", "shorts_format_fit", "overall_originality",
 ]
 
-MAX_CANDIDATES_TO_SCORE = 10  # keep batch size sane for one API call
+MAX_CANDIDATES_TO_SCORE = 10
 
 
 def build_prompt(candidates, recent_used_summaries):
@@ -75,7 +73,6 @@ Respond ONLY with valid JSON, no markdown fences, no extra text, in this exact s
 
 
 def extract_json(text):
-    """Gemini sometimes wraps JSON in markdown fences despite instructions; strip them."""
     text = text.strip()
     text = re.sub(r"^```(json)?", "", text).strip()
     text = re.sub(r"```$", "", text).strip()
@@ -107,7 +104,7 @@ def main():
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel(MODEL_NAME)
 
-        prompt = build_prompt(candidates, recent_summaries)
+    prompt = build_prompt(candidates, recent_summaries)
     response = model.generate_content(
         prompt,
         generation_config={"max_output_tokens": 16000},
@@ -126,6 +123,7 @@ def main():
         print(response.text)
         print("=== END RAW RESPONSE ===")
         raise e
+
     scored = []
     for result in parsed.get("results", []):
         idx = result.get("index")
