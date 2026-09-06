@@ -26,7 +26,7 @@ CRITERIA = [
     "competition_level", "shorts_format_fit", "overall_originality",
 ]
 
-MAX_CANDIDATES_TO_SCORE = 30  # keep batch size sane for one API call
+MAX_CANDIDATES_TO_SCORE = 15  # keep batch size sane for one API call
 
 
 def build_prompt(candidates, recent_used_summaries):
@@ -107,9 +107,18 @@ def main():
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel(MODEL_NAME)
 
-    prompt = build_prompt(candidates, recent_summaries)
-    response = model.generate_content(prompt)
-    parsed = extract_json(response.text)
+        prompt = build_prompt(candidates, recent_summaries)
+    response = model.generate_content(
+        prompt,
+        generation_config={"max_output_tokens": 8192},
+    )
+    try:
+        parsed = extract_json(response.text)
+    except Exception as e:
+        print("=== RAW GEMINI RESPONSE (for debugging) ===")
+        print(response.text)
+        print("=== END RAW RESPONSE ===")
+        raise e
 
     scored = []
     for result in parsed.get("results", []):
