@@ -107,7 +107,7 @@ def main():
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel(MODEL_NAME)
 
-        prompt = build_prompt(candidates, recent_summaries)
+    prompt = build_prompt(candidates, recent_summaries)
     response = model.generate_content(
         prompt,
         generation_config={"max_output_tokens": 8192},
@@ -138,7 +138,6 @@ def main():
             "justification": result.get("justification", ""),
         })
 
-    # Drop anything flagged as a semantic duplicate
     non_duplicates = [c for c in scored if not c["is_likely_duplicate"]]
     duplicates = [c for c in scored if c["is_likely_duplicate"]]
 
