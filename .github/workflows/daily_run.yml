@@ -23,42 +23,36 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Step 1 - Fetch RSS feeds
-        working-directory: src
-        run: python fetch_feeds.py
+        run: python src/fetch_feeds.py
 
       - name: Step 2 - Duplicate filter (Layer 1)
-        working-directory: src
         env:
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           SHEET_ID: ${{ secrets.SHEET_ID }}
-        run: python dedup_check.py
+        run: python src/dedup_check.py
 
       - name: Step 3 - Score candidates with Gemini
-        working-directory: src
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           SHEET_ID: ${{ secrets.SHEET_ID }}
-        run: python score_candidates.py
+        run: python src/score_candidates.py
 
       - name: Step 4 - Verify facts
-        working-directory: src
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python verify_facts.py
+        run: python src/verify_facts.py
 
       - name: Step 5 - Generate final script package
-        working-directory: src
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python generate_package.py
+        run: python src/generate_package.py
 
       - name: Step 6 - Write results to Google Sheet
-        working-directory: src
         env:
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           SHEET_ID: ${{ secrets.SHEET_ID }}
-        run: python sheets_writer.py
+        run: python src/sheets_writer.py
 
       - name: Commit data files back to repo (for debugging/history)
         run: |
